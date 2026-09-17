@@ -1,0 +1,6 @@
+# Normalize line endings so a checkout on any platform produces the same bytes.
+# `lib/` is committed build output and is consumed directly by the DSH loader.
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.woff2 binary

@@ -1,0 +1,6 @@
+{
+  "clientExternals": [
+    "react",
+    "@deepseek-ai/dsh-client-ui-primitives"
+  ]
+}

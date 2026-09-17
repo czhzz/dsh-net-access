@@ -1,0 +1,10 @@
+# Dependencies are never committed; the build resolves them from the checkout
+# beside this plugin (see scripts/build.mjs).
+node_modules/
+
+# Build-time residue. `lib/` is intentionally NOT ignored: the shipped client
+# bundle is committed so `dsh plugin add github:…` needs no local build and no
+# pnpm build approval.
+*.log
+.DS_Store
+Thumbs.db

@@ -1,0 +1,133 @@
+/* Remote Access settings section.
+ *
+ * Follows the settings-page field idiom rather than inventing a card layout:
+ * each decision is a `field` row stack separated by a hairline, with the label
+ * and its control sharing a `head` line and the explanation beneath in `hint`.
+ * Every color resolves through a `--dsw-alias-*` token; neutral separators draw
+ * at the 0.5px hairline weight. */
+
+.field {
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px 0;
+  display: flex;
+}
+
+.field + .field {
+  border-top: 0.5px solid var(--dsw-alias-border-l2);
+}
+
+.head {
+  align-items: center;
+  gap: 8px;
+  display: flex;
+  min-height: 24px;
+}
+
+.label {
+  min-width: 0;
+  color: var(--dsw-alias-label-primary);
+  flex: 1;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 22px;
+}
+
+.badges {
+  align-items: center;
+  gap: 8px;
+  display: inline-flex;
+}
+
+.intro {
+  color: var(--dsw-alias-label-secondary);
+  margin: 0 0 4px;
+  font-size: 13px;
+  line-height: 20px;
+}
+
+.hint {
+  color: var(--dsw-alias-label-tertiary);
+  margin: 0;
+  font-size: 12px;
+  line-height: 18px;
+}
+
+/* The posture strip: selectable capsules, as view switchers use. Pills are
+   24px tall, so the strip gets a little breathing room off the label line. */
+.choices {
+  flex-wrap: wrap;
+  gap: 6px;
+  display: flex;
+  padding-top: 2px;
+}
+
+/* Restart guidance sits at the field's own rhythm: a warn-toned heading over
+   the shared hint tone, so it reads as an annotation rather than an alert. */
+.restartNote {
+  margin: 0;
+  padding: 12px 0;
+  font-size: 12px;
+  line-height: 18px;
+  color: var(--dsw-alias-state-warn-label);
+  border-top: 0.5px solid var(--dsw-alias-border-l2);
+}
+
+.command {
+  font-family: var(--dsh-font-mono, ui-monospace, monospace);
+  font-size: 12px;
+  line-height: 20px;
+  color: var(--dsw-alias-label-secondary);
+  background: var(--dsw-alias-bg-layer-3);
+  border-radius: 6px;
+  padding: 1px 6px;
+  user-select: all;
+}
+
+/* Inputs match the ui-primitives `Input` metrics (32px, r8, hairline l4 over
+   layer-1) so a text field reads the same here as anywhere else in settings. */
+.input {
+  box-sizing: border-box;
+  width: 100%;
+  border: 0.5px solid var(--dsw-alias-border-l4);
+  background: var(--dsw-alias-bg-layer-1);
+  height: 32px;
+  font: inherit;
+  color: var(--dsw-alias-label-primary);
+  border-radius: 8px;
+  padding: 0 10px;
+  font-size: 14px;
+  line-height: 22px;
+}
+
+.input::placeholder {
+  color: var(--dsw-alias-label-dimmed);
+}
+
+.input:focus-visible {
+  border-color: var(--dsw-alias-brand-primary);
+  outline: none;
+}
+
+.input:disabled {
+  color: var(--dsw-alias-label-tertiary);
+  cursor: default;
+}
+
+.textarea {
+  composes: input;
+  height: auto;
+  min-height: 58px;
+  padding: 6px 10px;
+  resize: vertical;
+  font-family: var(--dsh-font-mono, ui-monospace, monospace);
+  font-size: 13px;
+  line-height: 20px;
+}
+
+.actions {
+  align-items: center;
+  gap: 8px;
+  padding-top: 12px;
+  display: flex;
+}

@@ -1,0 +1,59 @@
+# dsh-remote-access — the bundle's contribution to a dsh profile.
+#
+# Three entries, in order, and the order is the contract.
+#
+# 1. `insert` mounts the plugin row, which resolves the reachability posture and
+#    provides the `remoteAccess` service.
+# 2. The `webserver` override reads the bind host the posture composed. The base
+#    expression is `ctx.webStartup.host ?? '127.0.0.1'`; it is restated here
+#    because a patch replaces the whole `config` block.
+# 3. The `connection` override reads the trust fence.
+#
+# The reads are function CALLS, not value captures. `!!js` is interpolated once
+# when the loader resolves the row, so `ctx.remoteAccess.trustedHosts` without
+# the call would freeze the fence at boot and the settings page would appear to
+# do nothing. In practice the service is present whenever this bundle is mounted.
+- insert:
+    - id: remote-access
+      name: dsh-remote-access
+      config:
+        # `off` binds loopback and closes the port; `local` keeps the port open
+        # but admits loopback alone; `tailscale` trusts just the tailnet
+        # address; `all` trusts every local IPv4. Only `off` changes the bind,
+        # so only `off` needs a restart.
+        mode: local
+        # Leave empty to detect the Tailscale adapter address. Pin a 100.x.y.z
+        # literal when detection is wrong (several CGNAT overlays, or a node
+        # reached by hostname rather than interface).
+        address: ''
+        extraTrustedHosts: []
+
+- id: webserver
+  # `inject` is required, not decorative: Cordis's context proxy refuses a read
+  # of a service the reading fiber never declared.
+  #
+  # `host` is limited by the upstream schema to `127.0.0.1` or `0.0.0.0`, so a
+  # posture that wants all interfaces must bind `0.0.0.0` and fence access at
+  # the `connection` row below. This expression therefore carries the *bind*
+  # only; it is read once, as the socket is opened at activation.
+  inject: [webStartup, remoteAccess]
+  config:
+    host: !!js "ctx.remoteAccess.bindHost()"
+    port: !!js "ctx.webStartup.port ?? 3080"
+    compression: gzip
+    compressionLevel: 1
+    compressionThresholdBytes: 1024
+
+- id: connection
+  # This fence is evaluated per request, so a posture switched in the settings
+  # page takes effect on the next request without a restart.
+  #
+  # The composed `ctx.webRuntime.trustedHosts` is deliberately NOT consulted:
+  # upstream derives it from *every* non-internal IPv4 whenever the bind is
+  # `0.0.0.0`, which is precisely the set the `tailscale` posture exists to
+  # exclude. The `all` posture reproduces that set itself, and any
+  # `--trusted-host` authorities arrive through `webStartup` and are merged by
+  # the plugin, so nothing the operator asked for is lost.
+  inject: [remoteAccess]
+  config:
+    trustedHosts: !!js "ctx.remoteAccess.trustedHosts()"

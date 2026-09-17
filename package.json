@@ -1,0 +1,56 @@
+{
+  "name": "dsh-remote-access",
+  "version": "0.1.0",
+  "description": "Control how the DeepSeek Harness Web GUI is reachable: local only, Tailscale, all local networks, or off.",
+  "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/czhzz/dsh-remote-access.git"
+  },
+  "homepage": "https://github.com/czhzz/dsh-remote-access#readme",
+  "bugs": {
+    "url": "https://github.com/czhzz/dsh-remote-access/issues"
+  },
+  "keywords": [
+    "deepseek-harness",
+    "dsh-plugin",
+    "dsh",
+    "remote-access",
+    "tailscale",
+    "lan",
+    "cordis"
+  ],
+  "engines": {
+    "node": "^22.19.0 || >=24.0.0"
+  },
+  "main": "./lib/index.js",
+  "exports": {
+    ".": {
+      "default": "./lib/index.js"
+    },
+    "./client": {
+      "default": "./lib/client.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib",
+    "cordis.patch.yml"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web"
+    }
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "node tests/detect.test.js && node tests/peer-range.check.mjs"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/schemastery": ">=0.1.6-alpha.0 <0.2.0-0 || >=0.1.0-rc.1 <0.1.6"
+  }
+}
