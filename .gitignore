@@ -15,3 +15,8 @@ Thumbs.db
 # working files. Nothing here is part of the published plugin, so it must never
 # reach the public repository.
 .local/
+
+# Playwright MCP's working directory: accessibility snapshots and console logs
+# from driving the built page in a browser. Machine-local like `.local/`, and
+# rewritten on every session.
+.playwright-mcp/
