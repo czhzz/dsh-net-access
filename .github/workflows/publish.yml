@@ -1,0 +1,104 @@
+name: Publish
+
+# Tag pushes only. `ci.yml` watches `branches: [main]`, and a tag is not a
+# branch, so none of its checks run here — this workflow has to redo them
+# before it stages anything. That is the point: what gets staged has to be
+# a commit that passed, and `lib/` has to match `src/` at that commit.
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+
+jobs:
+  stage:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      # Mints the OIDC token that replaces NPM_TOKEN. `npm publish` and
+      # `npm stage publish` are the only two commands that use it; without
+      # this the registry returns ENEEDAUTH.
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v7
+
+      # Node 24, not the 22 that ci.yml uses. Trusted publishing needs npm
+      # >= 11.5.1 and staged publishing needs >= 11.15.0, while Node 22 ships
+      # npm 10.x — the toolchain bundled with the runtime is the one npm
+      # guarantees is intact, so pin the runtime rather than upgrading npm
+      # globally on top of it.
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          registry-url: 'https://registry.npmjs.org'
+
+      - run: npm ci
+
+      # Node 24.18 is the first 24.x carrying npm 11.16; 24.17 still has
+      # 11.13 and cannot stage. `node-version: 24` resolves to the newest
+      # 24.x so this holds today, but a future runner image could move the
+      # floor, and a silent downgrade would surface as a confusing registry
+      # error rather than as this line.
+      - name: Verify npm can stage publish
+        run: |
+          NPM_VERSION=$(npm --version)
+          if [ "$(printf '%s\n' 11.15.0 "$NPM_VERSION" | sort -V | head -n1)" != "11.15.0" ]; then
+            echo "npm $NPM_VERSION cannot stage publish; 11.15.0+ is required."
+            exit 1
+          fi
+          echo "npm $NPM_VERSION supports staged publishing."
+
+      # The tag is the release's identity and the package version is what
+      # the registry keys on. If they disagree the tag is a lie, so stop
+      # before staging something that can never be approved under it.
+      - name: Verify the tag matches package.json
+        run: |
+          TAG_VERSION="${GITHUB_REF_NAME#v}"
+          PKG_VERSION=$(node -p "require('./package.json').version")
+          if [ "$TAG_VERSION" != "$PKG_VERSION" ]; then
+            echo "Tag $GITHUB_REF_NAME does not match package.json version $PKG_VERSION."
+            exit 1
+          fi
+          echo "Tag and package.json agree on $PKG_VERSION."
+
+      - run: npm test
+
+      - run: npm run check:lib
+
+      # Re-running a tag workflow is normal — a flaky step, a re-approval.
+      # Once the version is live there is nothing left to stage, and without
+      # this guard the second run fails on a registry error instead of
+      # reporting that the work is already done.
+      #
+      # This does not cover a version staged but not yet approved: that one
+      # is still unpublished, so a re-run stages it a second time and the
+      # duplicate has to be rejected in the Staged Packages tab.
+      - name: Check whether this version is already published
+        id: published
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          if npm view "dsh-net-access@${VERSION}" version >/dev/null 2>&1; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "dsh-net-access@${VERSION} is already on the registry."
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      # Staged, not published. This lands in the Staged Packages tab and
+      # needs a 2FA approval there before anyone can install it. Provenance
+      # is attached automatically — the repo and the package are both
+      # public, and OIDC is doing the authenticating.
+      - name: Stage release
+        if: steps.published.outputs.skip != 'true'
+        run: npm stage publish
+
+      - name: Report
+        if: steps.published.outputs.skip != 'true'
+        run: |
+          {
+            echo "### Staged \`dsh-net-access@$(node -p "require('./package.json').version")\`"
+            echo
+            echo "Approve it in the Staged Packages tab on npmjs.com, or run \`npm stage approve\` locally."
+          } >> "$GITHUB_STEP_SUMMARY"
