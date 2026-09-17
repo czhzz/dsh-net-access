@@ -140,9 +140,14 @@ dsh web: http://127.0.0.1:3080/?token=… (LAN: http://100.x.y.z:3080/?token=…
 ## 开发
 
 ```sh
+npm install     # esbuild、lightningcss、semver，以及 schemastery（仅开发用）
 npm run build   # 宿主部分直接复制；客户端部分用 esbuild 打包
 npm test        # 16 项行为测试，覆盖四种模式
 ```
+
+`@deepseek-ai/schemastery` 是**可选 peer**：运行时由 DSH 宿主提供，插件自身不打包它，所以它不在 `dependencies` 里；但开发时源码要导入它，因此它同时列在 `devDependencies`。版本范围 `>=3.18.2 <4` 描述的是 **schemastery 自己的版本线**，不是 DSH 的——两者独立发版（`dsh` 是 `0.1.6-alpha.1` 时 schemastery 是 `3.18.2`）。照着 DSH 版本号写范围会让 `npm install` 直接 `ETARGET`，`tests/peer-range.check.mjs` 专门守住这一点，并从 `package.json` 读取范围本身。
+
+构建依赖优先从本目录的 `node_modules` 解析；找不到时才回退到旁边的 harness checkout 及其 pnpm store，因此在没有 harness checkout 的机器上也能构建。
 
 客户端部分被打包成 DSH 模块加载器所要求的单文件工厂。React 与 `@deepseek-ai/dsh-client-ui-primitives` 保持为外部依赖——由浏览器的模块表提供，姿态选择条复用共享的 `Pill` 控件而非另带一份副本。CSS Modules 经 lightningcss 编译，并通过带 `data-plugin-css` 标记的 `<style>` 元素按插件注入一次。
 

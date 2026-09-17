@@ -13,7 +13,7 @@
  */
 import { cp, mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises'
 import { createRequire } from 'node:module'
-import { basename, dirname, join } from 'node:path'
+import { basename, dirname, join, relative, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)))
@@ -114,7 +114,13 @@ function cssModules(pluginId) {
       build.onLoad({ filter: /\.module\.css$/ }, async (args) => {
         const source = await readFile(args.path, 'utf8')
         const { code, exports } = transform({
-          filename: args.path,
+          // lightningcss hashes this path to name the classes, and `lib/` is
+          // committed so CI can rebuild it and diff the result. Handed an
+          // absolute path the hash follows the checkout around: the rename from
+          // `dsh-remote-access` alone rewrote every class in the bundle, and a
+          // runner would disagree again. Reduced to a repository-relative path
+          // with forward slashes, Windows and Linux hash the same string.
+          filename: relative(root, args.path).split(sep).join('/'),
           code: Buffer.from(source),
           minify: true,
           cssModules: { pattern: '[hash]_[local]' },

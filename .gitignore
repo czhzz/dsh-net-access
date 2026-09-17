@@ -1,6 +1,8 @@
-# Dependencies are never committed; the build resolves them from the checkout
-# beside this plugin (see scripts/build.mjs).
+# Dependencies come from `npm install` (see package.json devDependencies); the
+# build and tests resolve them from this directory first and only fall back to a
+# sibling harness checkout.
 node_modules/
+.npm-cache/
 
 # Build-time residue. `lib/` is intentionally NOT ignored: the shipped client
 # bundle is committed so `dsh plugin add github:…` needs no local build and no

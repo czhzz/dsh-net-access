@@ -48,9 +48,21 @@
   },
   "scripts": {
     "build": "node scripts/build.mjs",
-    "test": "node tests/detect.test.js && node tests/peer-range.check.mjs"
+    "test": "node tests/detect.test.js && node tests/peer-range.check.mjs",
+    "check:lib": "npm run build && git diff --exit-code -- lib/"
   },
   "peerDependencies": {
-    "@deepseek-ai/schemastery": ">=0.1.6-alpha.0 <0.2.0-0 || >=0.1.0-rc.1 <0.1.6"
+    "@deepseek-ai/schemastery": ">=3.18.2 <4"
+  },
+  "peerDependenciesMeta": {
+    "@deepseek-ai/schemastery": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@deepseek-ai/schemastery": "^3.18.2",
+    "esbuild": "^0.25.0",
+    "lightningcss": "^1.28.0",
+    "semver": "^7.7.0"
   }
 }

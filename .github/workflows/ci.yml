@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm test
+
+      # `lib/` is committed so `dsh plugin add github:…` installs without a
+      # build and without a pnpm build approval. That only holds while the
+      # committed bundle tracks src/, so rebuild and fail if the tree moved.
+      #
+      # This rebuild has to agree byte for byte, and the CSS module class names
+      # are the part that can quietly stop agreeing: lightningcss hashes the
+      # path it is handed to name them, so build.mjs reduces it to a
+      # repository-relative one. If this step ever fails on a laptop but passes
+      # here, or the reverse, that is the first thing to look at.
+      - name: Verify lib/ matches src/
+        run: npm run check:lib
