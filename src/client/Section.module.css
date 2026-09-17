@@ -1,107 +1,268 @@
 /* Remote Access settings section.
  *
- * Follows the settings-page field idiom rather than inventing a card layout:
- * each decision is a `field` row stack separated by a hairline, with the label
- * and its control sharing a `head` line and the explanation beneath in `hint`.
- * Every color resolves through a `--dsw-alias-*` token; neutral separators draw
- * at the 0.5px hairline weight. */
+ * Follows the settings-page section idiom: a 12px column at the page's max
+ * width, titled like its siblings, with the cards and field metrics that
+ * `ui-agent-preset` and `ui-settings-plugins` already ship. Every color
+ * resolves through a `--dsw-alias-*` token and every neutral edge draws at the
+ * 0.5px hairline.
+ *
+ * The postures are cards rather than the pill strip this sheet used to carry,
+ * for the reason `ui-agent-preset` states about its own picker: a posture is a
+ * thing you pick, and the description is the part that tells the three apart —
+ * a strip shows one description at a time, so the two you did not pick are
+ * unreadable at the moment you are comparing them.
+ *
+ * The restart notice is the one block carrying a state tint, because it is the
+ * only thing on the page that asks the operator to act. */
 
-.field {
+/* ---------- Section shell ---------- */
+
+.section {
+  display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 14px 0;
-  display: flex;
-}
-
-.field + .field {
-  border-top: 0.5px solid var(--dsw-alias-border-l2);
-}
-
-.head {
-  align-items: center;
-  gap: 8px;
-  display: flex;
-  min-height: 24px;
-}
-
-.label {
-  min-width: 0;
+  gap: 12px;
+  max-width: 720px;
   color: var(--dsw-alias-label-primary);
-  flex: 1;
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 22px;
 }
 
-.badges {
-  align-items: center;
-  gap: 8px;
-  display: inline-flex;
+.title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 26px;
 }
 
 .intro {
-  color: var(--dsw-alias-label-secondary);
-  margin: 0 0 4px;
+  margin: 0;
   font-size: 13px;
+  line-height: 20px;
+  color: var(--dsw-alias-label-tertiary);
+}
+
+/* ---------- The master switch ---------- */
+
+/* A bordered row rather than a bare label line: the switch governs everything
+   below it, and the border is what says so before the copy is read. */
+.preference {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 14px 16px;
+  border: 0.5px solid var(--dsw-alias-border-l4);
+  border-radius: 14px;
+  background: var(--dsw-alias-bg-module-platform);
+}
+
+.preferenceCopy {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.preferenceTitle {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 22px;
+}
+
+.preferenceHint {
+  margin: 0;
+  font-size: 12px;
+  line-height: 18px;
+  color: var(--dsw-alias-label-tertiary);
+}
+
+/* Centred on the title's line rather than the row's top edge. */
+.preferenceControl {
+  flex: 0 0 auto;
+  padding-top: 1px;
+}
+
+/* ---------- Posture cards ---------- */
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.groupHead {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.groupTitle {
+  font-size: 13px;
+  font-weight: 600;
   line-height: 20px;
 }
 
-.hint {
-  color: var(--dsw-alias-label-tertiary);
-  margin: 0;
-  font-size: 12px;
-  line-height: 18px;
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(196px, 1fr));
+  /* Equal heights, so a two-line description does not leave its card short. */
+  grid-auto-rows: 1fr;
+  gap: 8px;
 }
 
-/* The posture strip: selectable capsules, as view switchers use. Pills are
-   24px tall, so the strip gets a little breathing room off the label line. */
-.choices {
-  flex-wrap: wrap;
-  gap: 6px;
+.card {
+  box-sizing: border-box;
   display: flex;
-  padding-top: 2px;
+  flex-direction: column;
+  gap: 6px;
+  align-items: flex-start;
+  margin: 0;
+  padding: 12px 14px;
+  border: 0.5px solid var(--dsw-alias-border-l4);
+  border-radius: 16px;
+  background: transparent;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color .16s, background .16s;
 }
 
-/* Restart guidance sits at the field's own rhythm: a warn-toned heading over
-   the shared hint tone, so it reads as an annotation rather than an alert. */
-.restartNote {
-  margin: 0;
-  padding: 12px 0;
+.card:hover:not(.cardActive) {
+  background: var(--dsw-alias-interactive-bg-hover);
+}
+
+/* The selected card is the platform fill plus the bluish-400 edge — the same
+   pair `ui-agent-preset`'s default card uses, so "picked" looks identical
+   wherever it appears in settings. */
+.cardActive {
+  background: var(--dsw-alias-bg-module-platform);
+  border-color: var(--dsw-static-neutral-bluish-400);
+}
+
+.card:focus-visible {
+  outline: 2px solid var(--dsw-alias-brand-primary);
+  outline-offset: -2px;
+}
+
+.cardHead {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.cardIcon {
+  display: flex;
+  flex: 0 0 auto;
+  color: var(--dsw-alias-label-tertiary);
+}
+
+/* The chosen card carries the only fully-inked icon in the row, so the pick
+   still reads at a glance with the labels ignored. */
+.cardActive .cardIcon {
+  color: var(--dsw-alias-label-primary);
+}
+
+.cardName {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 22px;
+}
+
+/* Secondary, not tertiary: this is the copy that distinguishes the three
+   cards, so it stays readable while the eye moves between them. */
+.cardDesc {
   font-size: 12px;
   line-height: 18px;
-  color: var(--dsw-alias-state-warn-label);
-  border-top: 0.5px solid var(--dsw-alias-border-l2);
+  color: var(--dsw-alias-label-secondary);
+}
+
+/* ---------- Restart callout ---------- */
+
+/* The tint is `Tag`'s warning fill, at the 12% that tone ships with, so the
+   notice and the "after restart" badge read as one family. The heading itself
+   stays label-primary: amber-600 at 12px on white is 3.1:1, which is a fine
+   ink for an 11px badge and not one for a paragraph. */
+.callout {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--dsw-alias-state-warn-primary) 12%, transparent);
+}
+
+.calloutIcon {
+  display: flex;
+  flex: 0 0 auto;
+  margin-top: 3px;
+  color: var(--dsw-alias-state-warn-primary);
+}
+
+.calloutBody {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.calloutTitle {
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 20px;
+}
+
+.calloutText {
+  margin: 0;
+  font-size: 12px;
+  line-height: 18px;
+  color: var(--dsw-alias-label-secondary);
 }
 
 .command {
-  font-family: var(--dsh-font-mono, ui-monospace, monospace);
+  /* `--ds-font-family-code` is the code stack the theme defines. This sheet
+     used to ask for `--dsh-font-mono`, which nothing defines, so it always
+     fell through to a fallback list ending in a bare `monospace` — the tail
+     the theme's own comment warns renders as SimSun under Windows CJK. */
+  font-family: var(--ds-font-family-code);
   font-size: 12px;
-  line-height: 20px;
-  color: var(--dsw-alias-label-secondary);
-  background: var(--dsw-alias-bg-layer-3);
+  line-height: 18px;
+  color: var(--dsw-alias-label-primary);
+  background: var(--dsw-alias-bg-layer-1);
+  border: 0.5px solid var(--dsw-alias-border-l4);
   border-radius: 6px;
   padding: 1px 6px;
   user-select: all;
 }
 
-/* Inputs match the ui-primitives `Input` metrics (32px, r8, hairline l4 over
-   layer-1) so a text field reads the same here as anywhere else in settings. */
+/* ---------- Text fields ---------- */
+
+.field {
+  display: grid;
+  gap: 6px;
+}
+
+.fieldLabel {
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 20px;
+}
+
+.hint {
+  margin: 0;
+  font-size: 12px;
+  line-height: 18px;
+  color: var(--dsw-alias-label-tertiary);
+}
+
 .input {
   box-sizing: border-box;
   width: 100%;
   border: 0.5px solid var(--dsw-alias-border-l4);
   background: var(--dsw-alias-bg-layer-1);
-  height: 32px;
-  font: inherit;
   color: var(--dsw-alias-label-primary);
-  border-radius: 8px;
-  padding: 0 10px;
-  font-size: 14px;
-  line-height: 22px;
-}
-
-.input::placeholder {
-  color: var(--dsw-alias-label-dimmed);
+  border-radius: 10px;
+  padding: 8px 12px;
+  font: inherit;
+  font-size: 13px;
+  line-height: 20px;
 }
 
 .input:focus-visible {
@@ -109,25 +270,39 @@
   outline: none;
 }
 
+.input::placeholder {
+  color: var(--dsw-alias-label-dimmed);
+}
+
 .input:disabled {
   color: var(--dsw-alias-label-tertiary);
   cursor: default;
 }
 
+/* Declared in full rather than composed: the client packages forbid
+   `composes`, and the two fields differ only in box and face anyway. */
 .textarea {
-  composes: input;
-  height: auto;
+  box-sizing: border-box;
+  width: 100%;
+  border: 0.5px solid var(--dsw-alias-border-l4);
+  background: var(--dsw-alias-bg-layer-1);
+  color: var(--dsw-alias-label-primary);
+  border-radius: 10px;
+  padding: 8px 12px;
+  font: inherit;
   min-height: 58px;
-  padding: 6px 10px;
   resize: vertical;
-  font-family: var(--dsh-font-mono, ui-monospace, monospace);
-  font-size: 13px;
+  font-family: var(--ds-font-family-code);
+  font-size: 12.5px;
   line-height: 20px;
 }
 
-.actions {
-  align-items: center;
-  gap: 8px;
-  padding-top: 12px;
-  display: flex;
+.textarea:focus-visible {
+  border-color: var(--dsw-alias-brand-primary);
+  outline: none;
+}
+
+.textarea:disabled {
+  color: var(--dsw-alias-label-tertiary);
+  cursor: default;
 }
