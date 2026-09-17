@@ -120,6 +120,13 @@ function cssModules(pluginId) {
           cssModules: { pattern: '[hash]_[local]' },
         })
         const tagId = `${pluginId}/${basename(args.path)}`
+        // lightningcss returns the class map in an unstable key order, so an
+        // unsorted emit rewrites the bundle on every rebuild of unchanged CSS.
+        // Sorting the outer keys is what makes the output reproducible; the
+        // per-class records inside keep their own fixed order.
+        const classMap = Object.fromEntries(
+          Object.entries(exports ?? {}).sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0)),
+        )
         const contents = [
           `const css = ${JSON.stringify(code.toString())};`,
           `const tagId = ${JSON.stringify(tagId)};`,
@@ -130,7 +137,7 @@ function cssModules(pluginId) {
           '  tag.textContent = css;',
           '  document.head.appendChild(tag);',
           '}',
-          `export default ${JSON.stringify(exports ?? {})};`,
+          `export default ${JSON.stringify(classMap)};`,
         ].join('\n')
         return { contents, loader: 'js' }
       })
