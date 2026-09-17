@@ -1,5 +1,10 @@
 # dsh-net-access
 
+[![npm](https://img.shields.io/npm/v/dsh-net-access)](https://www.npmjs.com/package/dsh-net-access)
+[![license](https://img.shields.io/npm/l/dsh-net-access)](./LICENSE)
+[![node](https://img.shields.io/node/v/dsh-net-access)](https://nodejs.org)
+[![GitHub stars](https://img.shields.io/github/stars/czhzz/dsh-net-access)](https://github.com/czhzz/dsh-net-access)
+
 从设置页控制 DeepSeek Harness Web GUI 的访问范围。
 
 想在手机上通过 [Tailscale](https://tailscale.com) 打开 GUI、想开放给整个局域网、或者只想锁死在本机——一个设置项、四种模式，并且会明确告诉你什么时候需要重启才生效。
