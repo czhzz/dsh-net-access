@@ -8,3 +8,8 @@ node_modules/
 *.log
 .DS_Store
 Thumbs.db
+
+# Local scratch: marketplace-submission drafts and any other machine-local
+# working files. Nothing here is part of the published plugin, so it must never
+# reach the public repository.
+.local/
