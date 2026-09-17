@@ -15,7 +15,7 @@
  * compartment. Subscribing by hand here would be a second source of truth for a
  * fact the framework already owns.
  *
- * @module dsh-remote-access/client/Section
+ * @module dsh-net-access/client/Section
  */
 
 import { createElement as h } from 'react'

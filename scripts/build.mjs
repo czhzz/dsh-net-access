@@ -20,7 +20,7 @@ const root = dirname(dirname(fileURLToPath(import.meta.url)))
 const lib = join(root, 'lib')
 
 /** This plugin's id: the loader registers the client bundle under it. */
-const PLUGIN_ID = 'dsh-remote-access'
+const PLUGIN_ID = 'dsh-net-access'
 
 /**
  * The module table DSH seeds before any client bundle runs.
@@ -86,7 +86,7 @@ async function loadBuildDependency(specifier) {
     }
   }
   throw new Error(
-    `dsh-remote-access: cannot resolve ${specifier} for the build. `
+    `dsh-net-access: cannot resolve ${specifier} for the build. `
     + 'Install it in the harness checkout (`pnpm install`), or add it here.',
   )
 }
@@ -166,7 +166,7 @@ const bundle = await esbuild.build({
 })
 
 const body = bundle.outputFiles[0].text
-const wrapped = 'window.__ModuleLoader__.load({ id: "dsh-remote-access", '
+const wrapped = 'window.__ModuleLoader__.load({ id: "dsh-net-access", '
   + 'factory: (require) => { var module = { exports: {} }; var exports = module.exports;\n'
   + body
   + '\nreturn module.exports; } });\n'
@@ -180,4 +180,4 @@ await writeFile(
   'utf8',
 )
 
-console.log(`dsh-remote-access: wrote lib/ (client externals: ${externals.join(', ') || 'none'})`)
+console.log(`dsh-net-access: wrote lib/ (client externals: ${externals.join(', ') || 'none'})`)

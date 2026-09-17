@@ -6,7 +6,7 @@
  * writes changes, so the browser never learns the machine's addresses beyond
  * what the operator typed.
  *
- * @module dsh-remote-access/client
+ * @module dsh-net-access/client
  */
 
 import { RemoteAccessSection } from './Section.js'

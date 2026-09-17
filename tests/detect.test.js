@@ -1,5 +1,5 @@
 /**
- * Behavioral tests for dsh-remote-access.
+ * Behavioral tests for dsh-net-access.
  *
  * Fixtures use the network shape of a real developer machine, where the
  * Tailscale adapter is one of many non-internal IPv4 interfaces. That shape is

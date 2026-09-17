@@ -8,7 +8,7 @@
  * therefore reports the applied posture alongside the selected one instead of
  * claiming a switch that has not happened.
  *
- * @module dsh-remote-access/client/section-controller
+ * @module dsh-net-access/client/section-controller
  */
 
 /** Namespace of this plugin. Spelled here rather than imported: a client bundle must not depend on a host module. */

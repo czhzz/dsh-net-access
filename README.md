@@ -1,4 +1,4 @@
-# dsh-remote-access
+# dsh-net-access
 
 从设置页控制 DeepSeek Harness Web GUI 的访问范围。
 
@@ -70,28 +70,33 @@ DSH 在服务器启动时**只绑定一次** HTTP 监听端口，且 `dsh-host-w
 
 ## 安装
 
-### 从 GitHub 安装
+推荐从 npm 安装：
 
 ```sh
-dsh plugin --profile web add github:czhzz/dsh-remote-access
+dsh plugin --profile web add dsh-net-access
 ```
 
-仓库内已提交构建产物，因此该命令不需要本地构建，也不需要 `allowBuilds` 授权。
+包内已含构建产物，因此这条命令不需要本地构建，也不需要 `allowBuilds` 授权。
 
-### 从本地目录安装
+<details>
+<summary>其他安装方式</summary>
+
+**从 GitHub 安装** —— 想跟未发布的提交时用：
 
 ```sh
-cd dsh-remote-access
+dsh plugin --profile web add github:czhzz/dsh-net-access
+```
+
+**从本地目录安装** —— 改代码时用：
+
+```sh
+cd dsh-net-access
 npm run build
 
-dsh plugin --profile web add /absolute/path/to/dsh-remote-access
+dsh plugin --profile web add /absolute/path/to/dsh-net-access
 ```
 
-### 从 npm 安装
-
-```sh
-dsh plugin --profile web add dsh-remote-access
-```
+</details>
 
 ### 重启生效
 

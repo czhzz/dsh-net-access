@@ -54,7 +54,7 @@ export async function loadBuildDependency(specifier) {
     }
   }
   throw new Error(
-    `dsh-remote-access: cannot resolve ${specifier} for this check. `
+    `dsh-net-access: cannot resolve ${specifier} for this check. `
     + 'Install it in the harness checkout (`pnpm install`) beside this plugin.',
   )
 }

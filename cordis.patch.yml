@@ -1,4 +1,4 @@
-# dsh-remote-access — the bundle's contribution to a dsh profile.
+# dsh-net-access — the bundle's contribution to a dsh profile.
 #
 # Three entries, in order, and the order is the contract.
 #
@@ -15,7 +15,7 @@
 # do nothing. In practice the service is present whenever this bundle is mounted.
 - insert:
     - id: remote-access
-      name: dsh-remote-access
+      name: dsh-net-access
       config:
         # `off` binds loopback and closes the port; `local` keeps the port open
         # but admits loopback alone; `tailscale` trusts just the tailnet

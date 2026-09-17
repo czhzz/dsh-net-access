@@ -1,16 +1,16 @@
 {
-  "name": "dsh-remote-access",
+  "name": "dsh-net-access",
   "version": "0.1.0",
   "description": "Control how the DeepSeek Harness Web GUI is reachable: local only, Tailscale, all local networks, or off.",
   "type": "module",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/czhzz/dsh-remote-access.git"
+    "url": "git+https://github.com/czhzz/dsh-net-access.git"
   },
-  "homepage": "https://github.com/czhzz/dsh-remote-access#readme",
+  "homepage": "https://github.com/czhzz/dsh-net-access#readme",
   "bugs": {
-    "url": "https://github.com/czhzz/dsh-remote-access/issues"
+    "url": "https://github.com/czhzz/dsh-net-access/issues"
   },
   "keywords": [
     "deepseek-harness",
