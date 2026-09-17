@@ -126,12 +126,21 @@ function cssModules(pluginId) {
           cssModules: { pattern: '[hash]_[local]' },
         })
         const tagId = `${pluginId}/${basename(args.path)}`
-        // lightningcss returns the class map in an unstable key order, so an
-        // unsorted emit rewrites the bundle on every rebuild of unchanged CSS.
-        // Sorting the outer keys is what makes the output reproducible; the
-        // per-class records inside keep their own fixed order.
+        // Each entry arrives as a record (`{ name, composes, isReferenced }`),
+        // not as the bare class name a `styles.x` lookup has to yield. Emitting
+        // the records as-is is what 0.1.1 shipped: every `styles.x` evaluated to
+        // an object, every `className` rendered as "[object Object]", and the
+        // injected sheet matched nothing at all — the plugin drew as unstyled
+        // HTML. Only `name` is read back out; `composes` stays empty because the
+        // client packages forbid it.
+        //
+        // lightningcss returns the map in an unstable key order, so an unsorted
+        // emit rewrites the bundle on every rebuild of unchanged CSS. Sorting
+        // the outer keys is what makes the output reproducible.
         const classMap = Object.fromEntries(
-          Object.entries(exports ?? {}).sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0)),
+          Object.entries(exports ?? {})
+            .map(([key, value]) => [key, typeof value === 'string' ? value : value.name])
+            .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0)),
         )
         const contents = [
           `const css = ${JSON.stringify(code.toString())};`,
